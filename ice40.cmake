@@ -12,7 +12,7 @@ function(ice40_synth)
 		FPGA_TYPE
 		FPGA_PKG
 	)
-	set(multiValueArgs)
+	set(multiValueArgs VERILOG_DEPENDS)
 	cmake_parse_arguments(SYNTH "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
 	find_program(YOSYS_COMMAND yosys
@@ -66,6 +66,7 @@ function(ice40_synth)
 			${SYNTH_TARGET}-yosys.log
 		DEPENDS
 			${SYNTH_TOP_LEVEL_VERILOG}
+			${SYNTH_VERILOG_DEPENDS}
 		)
 
 
