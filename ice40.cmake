@@ -16,16 +16,16 @@ function(ice40_synth)
 	cmake_parse_arguments(SYNTH "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
 	find_program(YOSYS_COMMAND yosys
-		HINT ${SYNTH_YOSYS_PATH} ENV YOSYS_PATH
+		HINTS ${SYNTH_YOSYS_PATH} ENV YOSYS_PATH
 	)
 	find_program(NEXTPNR_COMMAND nextpnr-ice40
-		HINT ${SYNTH_NEXTPNR_PATH} ENV NEXTPNR_PATH
+		HINTS ${SYNTH_NEXTPNR_PATH} ENV NEXTPNR_PATH
 	)
 	find_program(ICEPACK_COMMAND icepack
-		HINT ${SYNTH_ICEPACK_PATH} ENV ICEPACK_PATH
+		HINTS ${SYNTH_ICEPACK_PATH} ENV ICEPACK_PATH
 	)
 	find_program(ICETIME_COMMAND icetime
-		HINT ${SYNTH_ICEPACK_PATH} ENV ICEPACK_PATH
+		HINTS ${SYNTH_ICEPACK_PATH} ENV ICEPACK_PATH
 	)
 
 	get_filename_component(TOP_LEVEL_NAME ${SYNTH_TOP_LEVEL_VERILOG} NAME_WE)
@@ -86,11 +86,11 @@ function(ice40_sim)
 	cmake_parse_arguments(SYNTH "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
 	find_program(YOSYS_COMMAND yosys
-		HINT ${SYNTH_YOSYS_PATH} ENV YOSYS_PATH
+		HINTS ${SYNTH_YOSYS_PATH} ENV YOSYS_PATH
 	)
 
 	find_program(YOSYS_CONFIG_COMMAND yosys-config
-		HINT ${SYNTH_YOSYS_PATH} ENV YOSYS_PATH
+		HINTS ${SYNTH_YOSYS_PATH} ENV YOSYS_PATH
 	)
 
 	get_filename_component(TOP_LEVEL_NAME ${SYNTH_TOP_LEVEL_VERILOG} NAME_WE)
