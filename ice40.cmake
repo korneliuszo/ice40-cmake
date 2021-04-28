@@ -30,14 +30,20 @@ function(ice40_synth)
 
 	get_filename_component(TOP_LEVEL_NAME ${SYNTH_TOP_LEVEL_VERILOG} NAME_WE)
 
-	add_custom_target(${SYNTH_TARGET}.bin ALL
+	add_custom_target(${SYNTH_TARGET} ALL
+		DEPENDS
+			${SYNTH_TARGET}.bin
+			${SYNTH_TARGET}.rpt
+		)
+
+	add_custom_command(OUTPUT ${SYNTH_TARGET}.bin
 		COMMAND
 			${ICEPACK_COMMAND} ${SYNTH_TARGET}.asc ${SYNTH_TARGET}.bin
 		DEPENDS
 			${SYNTH_TARGET}.asc
 		)
 
-	add_custom_target(${SYNTH_TARGET}.rpt ALL
+	add_custom_command(OUTPUT ${SYNTH_TARGET}.rpt
 		COMMAND
 			${ICETIME_COMMAND} -d ${SYNTH_FPGA_TYPE} -P ${SYNTH_FPGA_PKG}
 				-p ${CMAKE_CURRENT_SOURCE_DIR}/${SYNTH_PCF_FILE} -mtr ${SYNTH_TARGET}.rpt ${SYNTH_TARGET}.asc
@@ -46,7 +52,7 @@ function(ice40_synth)
 			${SYNTH_PCF_FILE}
 		)
 
-	add_custom_target(${SYNTH_TARGET}.asc
+	add_custom_command(OUTPUT ${SYNTH_TARGET}.asc
 		COMMAND
 			${NEXTPNR_COMMAND} --${SYNTH_FPGA_TYPE} --package ${SYNTH_FPGA_PKG} --json ${SYNTH_TARGET}.json
 				--pcf ${CMAKE_CURRENT_SOURCE_DIR}/${SYNTH_PCF_FILE} --asc ${SYNTH_TARGET}.asc
@@ -55,7 +61,7 @@ function(ice40_synth)
 			${SYNTH_PCF_FILE}
 		)
 
-	add_custom_target(${SYNTH_TARGET}.json
+	add_custom_command(OUTPUT ${SYNTH_TARGET}.json
 		COMMAND
 		${YOSYS_COMMAND} -ql ${CMAKE_CURRENT_BINARY_DIR}/${SYNTH_TARGET}-yosys.log -p 
 				'synth_ice40 -top ${TOP_LEVEL_NAME} -json ${CMAKE_CURRENT_BINARY_DIR}/${SYNTH_TARGET}.json'
@@ -95,7 +101,8 @@ function(ice40_sim)
 
 	get_filename_component(TOP_LEVEL_NAME ${SYNTH_TOP_LEVEL_VERILOG} NAME_WE)
 
-	add_custom_target(${SYNTH_TARGET}.hpp
+	add_custom_command(
+		OUTPUT ${SYNTH_TARGET}.hpp
 		COMMAND
 		${YOSYS_COMMAND} -ql ${CMAKE_CURRENT_BINARY_DIR}/${SYNTH_TARGET}-yosys.log -p
 				'read_verilog ${SYNTH_TOP_LEVEL_VERILOG}\; write_cxxrtl ${CMAKE_CURRENT_BINARY_DIR}/${SYNTH_TARGET}.hpp'
@@ -108,8 +115,10 @@ function(ice40_sim)
 			${SYNTH_VERILOG_DEPENDS}
 		)
 
+	add_custom_target(${SYNTH_TARGET}.hpp-tgt DEPENDS ${SYNTH_TARGET}.hpp)
+
 	add_library(${SYNTH_TARGET} INTERFACE)
-	add_dependencies(${SYNTH_TARGET} ${SYNTH_TARGET}.hpp)
+	add_dependencies(${SYNTH_TARGET} ${SYNTH_TARGET}.hpp-tgt)
 	target_include_directories(${SYNTH_TARGET} INTERFACE ${CMAKE_CURRENT_BINARY_DIR})
 	execute_process(COMMAND ${YOSYS_CONFIG_COMMAND} --datdir OUTPUT_VARIABLE YOSYS_DATADIR OUTPUT_STRIP_TRAILING_WHITESPACE)
 	target_include_directories(${SYNTH_TARGET} INTERFACE ${YOSYS_DATADIR}/include)
