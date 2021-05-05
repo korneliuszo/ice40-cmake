@@ -105,7 +105,9 @@ function(ice40_sim)
 		OUTPUT ${SYNTH_TARGET}.hpp
 		COMMAND
 		${YOSYS_COMMAND} -ql ${CMAKE_CURRENT_BINARY_DIR}/${SYNTH_TARGET}-yosys.log -p
-				'read_verilog ${SYNTH_TOP_LEVEL_VERILOG}\; write_cxxrtl ${CMAKE_CURRENT_BINARY_DIR}/${SYNTH_TARGET}.hpp'
+				'read_verilog ${SYNTH_TOP_LEVEL_VERILOG}\;
+				hierarchy -top ${TOP_LEVEL_NAME} \;
+				write_cxxrtl ${CMAKE_CURRENT_BINARY_DIR}/${SYNTH_TARGET}.hpp'
 		WORKING_DIRECTORY
 			${CMAKE_CURRENT_SOURCE_DIR}
 		BYPRODUCTS
