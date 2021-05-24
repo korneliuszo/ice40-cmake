@@ -87,6 +87,7 @@ function(ice40_sim)
 		YOSYS_PATH
 		NEXTPNR_PATH
 		ICEPACK_PATH
+		CXXRTL_OPTIMIZE
 	)
 	set(multiValueArgs VERILOG_DEPENDS)
 	cmake_parse_arguments(SYNTH "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -107,7 +108,7 @@ function(ice40_sim)
 		${YOSYS_COMMAND} -ql ${CMAKE_CURRENT_BINARY_DIR}/${SYNTH_TARGET}-yosys.log -p
 				'read_verilog ${SYNTH_TOP_LEVEL_VERILOG}\;
 				hierarchy -top ${TOP_LEVEL_NAME} \;
-				write_cxxrtl -O4 ${CMAKE_CURRENT_BINARY_DIR}/${SYNTH_TARGET}.hpp'
+				write_cxxrtl -O${CXXRTL_OPTIMIZE} ${CMAKE_CURRENT_BINARY_DIR}/${SYNTH_TARGET}.hpp'
 		WORKING_DIRECTORY
 			${CMAKE_CURRENT_SOURCE_DIR}
 		BYPRODUCTS
